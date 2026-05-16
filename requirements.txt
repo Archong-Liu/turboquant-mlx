@@ -1,0 +1,7 @@
+mlx>=0.16.0
+mlx-lm>=0.16.0
+numpy>=1.26.0
+scipy>=1.13.0
+torch>=2.3.0          # optional, for cross-checking results
+transformers>=4.42.0  # optional, for loading HuggingFace models
+tqdm>=4.66.0
