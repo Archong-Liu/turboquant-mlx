@@ -18,11 +18,12 @@ class TurboQuant:
             output_dim=qjl_output_dim or dim,
             seed=seed,
         )
-        # Fixed random rotation matrix (orthogonal-ish via QR of random normal)
+        # Proper random orthogonal rotation matrix via QR decomposition (Haar measure).
+        # Must run on mx.cpu — linalg.qr is not yet GPU-backed in MLX.
         key = mx.random.key(seed + 1)
         raw = mx.random.normal(shape=(dim, dim), key=key)
-        # Approximate orthogonal matrix via normalization of columns
-        self.R = (raw / (mx.linalg.norm(raw, axis=0, keepdims=True) + 1e-8)).astype(mx.bfloat16)
+        Q, _ = mx.linalg.qr(raw, stream=mx.cpu)
+        self.R = Q.astype(mx.bfloat16)
 
     def compress(self, x: mx.array) -> dict:
         """
